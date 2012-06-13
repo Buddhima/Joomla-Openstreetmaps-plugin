@@ -11,7 +11,6 @@ defined('_JEXEC') or die;
 
 class plgContentOpenstreetmaps extends JPlugin
 {
-
 	/**
 	 * Plugin that loads openstreetmaps into articles
 	 *
@@ -23,22 +22,21 @@ class plgContentOpenstreetmaps extends JPlugin
 	public function onContentPrepare($context, &$article, &$params, $page = 0)
 	{
 		// simple check to determine whether should process further
-		if (strpos($article->text, 'openstreetmaps') === false) {
+		if (strpos($article->text, 'openstreetmaps') === false)
+		{
 			return true;
 		}
-
 		// expression to search for (positions)
 		$regex	= '/{openstreetmaps\s+(.*?)}/i';
-
 		// Find all instances of plugin and put in $matches for openstreetmaps
 		// $matches[0] is full pattern match, $matches[1] is the position
 		preg_match_all($regex,$article->text,$matches,PREG_SET_ORDER);
 
-		if($matches){
-
+		if($matches)
+		{
 			// iterate through all matches found 
-			foreach($matches as $match){
-
+			foreach($matches as $match)
+			{
 				// default values
 				$this->btmlat =4.59;
 				$this->toplat =11.86;
@@ -47,32 +45,26 @@ class plgContentOpenstreetmaps extends JPlugin
 				$this->str='';
 
 				// get parameters given by user
-
 				// get latitudes as top and bottom boarders
 				if (preg_match('/bottom_latitude=([\+\-]?[0-9\.]+)/', $match[1], $matches2)) $this->btmlat = $matches2[1];
 				if (preg_match('/top_latitude=([\+\-]?[0-9\.]+)/', $match[1], $matches2)) $this->toplat = $matches2[1];
-
 				// get longitudes as laft and right boarders
 				if (preg_match('/left_longitude=([\+\-]?[0-9\.]+)/', $match[1], $matches2)) $this->lftlong = $matches2[1];
 				if (preg_match('/right_longitude=([\+\-]?[0-9\.]+)/', $match[1], $matches2)) $this->rgtlong = $matches2[1];
-
+				// default value for center
 				$this->center=0;
 				// zoom varies from 0 to 20 recommonded
 				$this->zoom=1; 
-
 				// get center and zoom level
 				if (preg_match('/center=([\+\-]?[0-9\.]+,[\+\-]?[0-9\.]+)/', $match[1], $matches2)) $this->center = $matches2[1];
 				if (preg_match('/zoom=([\+\-]?[0-9\.]+)/', $match[1], $matches2)) $this->zoom = $matches2[1];
-
-				if($this->center){
-					//seperate lon lat
+				if($this->center)
+				{
+					// seperate lon lat
 					$this->centerlatlon=  explode(',', $this->center);
-
 					// assign center lat , lon to special variables
 					$this->centerlat=$this->centerlatlon[0];
 					$this->centerlon=  $this->centerlatlon[1];
-
-
 					// constants need for bounds calculation
 					$this->LATITUDE_CONSTANT=90.0;
 					$this->LONGITUDE_CONSTANT=250.0;
@@ -93,9 +85,7 @@ class plgContentOpenstreetmaps extends JPlugin
 					// need special consideration about Latitude values
 					if($this->btmlat<-89)$this->btmlat=-89.0;
 					if($this->toplat>+89)$this->toplat=+89.0;
-
 				}
-
 				// get height and width
 				$this->height =350;
 				$this->width = 425;
@@ -109,7 +99,8 @@ class plgContentOpenstreetmaps extends JPlugin
 				if($this->btmlat||$this->toplat||$this->lftlong||$this->rgtlong)
 				{
 					$this->str= 'width="'.$this->width .'" height="'.$this->height.'" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="http://www.openstreetmap.org/export/embed.html?bbox='.$this->lftlong.','.$this->btmlat.','.$this->rgtlong.','.$this->toplat.'&amp;layer='.$this->layer;
-				}else{
+				}else
+				{
 	
 					// print error message
 				}
